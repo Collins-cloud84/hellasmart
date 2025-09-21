@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hellasmart - Multi-Level Earning</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+:root {
+  --blue: #4a90e2;
+  --violet: #7b1fa2;
+  --white: #fff;
+  --accent: #eb2f64;
+}
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--blue) 30%, var(--violet) 100%);
+  color: var(--white);
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(123,31,162,0.94);
+  padding: 0.8em 1.5em;
+}
+.site-title {
+  font-size: 2em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+.hamburger {
+  font-size: 2em;
+  cursor: pointer;
+  user-select: none;
+  color: var(--white);
+  display: block;
+}
+nav#sidebar {
+  position: fixed;
+  right: -220px;
+  top: 0; height: 100vh; width: 220px;
+  background: rgba(74,144,226,0.97);
+  box-shadow: -2px 0 12px rgba(123,31,162,0.08);
+  transition: right 0.3s;
+  z-index: 100;
+}
+nav#sidebar.open {
+  right: 0;
+}
+nav#sidebar ul {
+  list-style: none;
+  padding: 2em 1em;
+  margin: 0;
+}
+nav#sidebar li {
+  margin: 1.2em 0;
+}
+nav#sidebar a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 1.15em;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+nav#sidebar a:hover {
+  color: var(--accent);
+}
+main {
+  max-width: 600px;
+  margin: 32px auto;
+  padding: 0 1.2em;
+}
+section {
+  background: rgba(255,255,255,0.13);
+  border-radius: 15px;
+  padding: 1.5em 1em;
+  margin-bottom: 2em;
+  box-shadow: 0 2px 12px rgba(74,144,226,0.10);
+}
+.hidden { display: none; }
+h2 { color: var(--blue); margin-top: 0; }
+h3 { color: var(--violet); }
+input[type="text"], input[type="tel"], input[type="email"], input[type="password"] {
+  width: 98%; padding: 10px; margin: 7px 0 15px;
+  border-radius: 8px; border: none;
+  font-size: 1em; color: var(--blue);
+  background: rgba(255,255,255,0.9);
+}
+input:focus { outline: 2px solid var(--accent); }
+.btn-gradient {
+  background: linear-gradient(90deg, var(--blue), var(--violet));
+  color: var(--white);
+  border: none; border-radius: 8px;
+  padding: 10px 22px; font-weight: bold;
+  font-size: 1em; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.09);
+  transition: background 0.2s;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+.btn-gradient:disabled {
+  background: #bbb;
+  color: #eee;
+  cursor: not-allowed;
+}
+.btn-gradient:hover:not(:disabled) { background: linear-gradient(90deg, var(--accent), var(--blue)); }
+.message { font-size: 1em; margin-top: 10px; color: var(--accent); min-height: 22px; }
+.earn-block { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; }
+.earn-block > div { background: rgba(74,144,226,0.09); border-radius: 10px; padding: 0.7em 1em; }
+.earn-block .total { grid-column: span 2; text-align:center; margin-top: 1em; }
+footer {
+  text-align: center;
+  padding: 1em 0;
+  background: rgba(123,31,162,0.92);
+  color: var(--white);
+  letter-spacing: 1px;
+  margin-top: 3em;
+}
+@media (max-width: 700px) {
+  .earn-block { grid-template-columns: 1fr; }
+  main { padding: 0 0.5em; }
+}
+  </style>
+</head>
+<body>
+  <!-- Header with Hamburger -->
+  <header>
+    <div class="site-title">Hellasmart</div>
+    <div id="hamburger" class="hamburger">&#9776;</div>
+    <nav id="sidebar">
+      <ul>
+        <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
+        <li><a href="#" onclick="showSection('withdraw')">Withdraw</a></li>
+        <li><a href="#" onclick="showSection('faq')">FAQ</a></li>
+        <li><a href="#" onclick="showSection('profile')">Profile</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Registration Page -->
+    <section id="registration">
+      <h2>Register</h2>
+      <form id="regForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="text" id="country" placeholder="Country" required>
+        <button type="submit" class="btn-gradient">Register (200 KES)</button>
+        <p id="regMessage" class="message"></p>
+      </form>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="hidden">
+      <h2>Dashboard</h2>
+      <div class="earn-block">
+        <div>
+          <h3>Videos Watched</h3>
+          <p>
+            <span id="vids">0</span>/2 (<span id="vidEarn">0</span> KES)
+            <br>
+            <button class="btn-gradient" id="videoBtn">Watch Video</button>
+          </p>
+        </div>
+        <div>
+          <h3>Photos Liked</h3>
+          <p>
+            <span id="photos">0</span>/5 (<span id="photoEarn">0</span> KES)
+            <br>
+            <button class="btn-gradient" id="photoBtn">Like Photo</button>
+          </p>
+        </div>
+        <div>
+          <h3>Trivia Answered</h3>
+          <p>
+            <span id="trivia">0</span>/5 (<span id="triviaEarn">0</span> KES)
+            <br>
+            <button class="btn-gradient" id="triviaBtn">Answer Trivia</button>
+          </p>
+        </div>
+        <div>
+          <h3>Referrals</h3>
+          <p>Level 1: <span id="referrals">0</span> (<span id="refEarn">0</span> KES)</p>
+          <p>Level 2: <span id="level2">0</span> (<span id="level2Earn">0</span> KES)</p>
+        </div>
+        <div class="total">
+          <h2>Total Earnings: <span id="totalEarn">0</span> KES</h2>
+        </div>
+      </div>
+      <button class="btn-gradient" id="withdrawBtn">Withdraw</button>
+      <p id="withMessage" class="message"></p>
+    </section>
+
+    <!-- Withdraw Page -->
+    <section id="withdraw" class="hidden">
+      <h2>Withdraw</h2>
+      <p>Minimum withdrawal: <strong>150 KES</strong></p>
+      <p>Current earnings: <span id="totalEarn2">0</span> KES</p>
+      <button class="btn-gradient" id="withdrawBtn2">Withdraw</button>
+      <p id="withMessage2" class="message"></p>
+    </section>
+
+    <!-- FAQ Page -->
+    <section id="faq" class="hidden">
+      <h2>FAQ</h2>
+      <ul>
+        <li>How do I earn? <br>Register, invite, watch videos, like photos, answer trivia.</li>
+        <li>How much can I withdraw? <br>Minimum 150 KES.</li>
+        <li>How do referrals work? <br>Level 1 (100 KES) & Level 2 (50 KES) per completed registration.</li>
+      </ul>
+    </section>
+
+    <!-- Profile Page -->
+    <section id="profile" class="hidden">
+      <h2>Profile</h2>
+      <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+      <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
+      <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+      <p><strong>Country:</strong> <span id="profileCountry"></span></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Hellasmart. All rights reserved.</p>
+  </footer>
+  <script>
+    // Hamburger menu logic
+    document.getElementById('hamburger').onclick = function () {
+      let sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    };
+    window.onclick = function(e) {
+      let sidebar = document.getElementById('sidebar');
+      if (sidebar.classList.contains('open')
+          && !sidebar.contains(e.target)
+          && e.target.id !== 'hamburger') {
+        sidebar.classList.remove('open');
+      }
+    };
+
+    // Section routing
+    function showSection(id) {
+      document.querySelectorAll('main section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      if (id === 'dashboard') loadDashboard();
+      if (id === 'profile') loadProfile();
+      if (id === 'withdraw') document.getElementById('totalEarn2').textContent = currentUser ? currentUser.earnings : 0;
+    }
+
+    // Utility
+    function getToday() {
+      return new Date().toISOString().slice(0,10); // yyyy-mm-dd
+    }
+
+    // Simulated registration and dashboard logic
+    let registeredUsers = [];
+    let currentUser = null;
+
+    document.getElementById('regForm').onsubmit = function(e) {
+      e.preventDefault();
+      let username = document.getElementById('username').value.trim();
+      let phone = document.getElementById('phone').value.trim();
+      let email = document.getElementById('email').value.trim();
+      let password = document.getElementById('password').value;
+      let country = document.getElementById('country').value.trim();
+      let regMsg = document.getElementById('regMessage');
+
+      // Simple uniqueness check
+      if (registeredUsers.find(u => u.username === username)) {
+        regMsg.textContent = "Username already registered!";
+        return;
+      }
+      if (registeredUsers.find(u => u.phone === phone)) {
+        regMsg.textContent = "Phone number already registered!";
+        return;
+      }
+
+      // Simulate registration
+      currentUser = {
+        username, phone, email, password, country,
+        earnings: 0, referrals: 2, level2: 1,
+        vids: 0, photos: 0, trivia: 0,
+        lastVids: '', lastPhotos: '', lastTrivia: ''
+      };
+      registeredUsers.push(currentUser);
+      regMsg.textContent = "Registration successful!";
+
+      setTimeout(() => {
+        showSection('dashboard');
+      }, 1000);
+    };
+
+    // Daily reset logic
+    function resetDailyTasks() {
+      const today = getToday();
+      if (currentUser.lastVids !== today) {
+        currentUser.vids = 0;
+        currentUser.lastVids = today;
+      }
+      if (currentUser.lastPhotos !== today) {
+        currentUser.photos = 0;
+        currentUser.lastPhotos = today;
+      }
+      if (currentUser.lastTrivia !== today) {
+        currentUser.trivia = 0;
+        currentUser.lastTrivia = today;
+      }
+    }
+
+    // Button state logic
+    function updateTaskButtons() {
+      document.getElementById('videoBtn').disabled = !canDoTask('Vids');
+      document.getElementById('photoBtn').disabled = !canDoTask('Photos');
+      document.getElementById('triviaBtn').disabled = !canDoTask('Trivia');
+    }
+
+    // Can do task check
+    function canDoTask(task) {
+      resetDailyTasks();
+      if (task === 'Vids') return currentUser.vids < 2;
+      if (task === 'Photos') return currentUser.photos < 5;
+      if (task === 'Trivia') return currentUser.trivia < 5;
+      return false;
+    }
+
+    // Simulated task completion
+    document.getElementById('videoBtn').onclick = function() {
+      if (canDoTask('Vids')) {
+        currentUser.vids++;
+        loadDashboard();
+      }
+    }
+    document.getElementById('photoBtn').onclick = function() {
+      if (canDoTask('Photos')) {
+        currentUser.photos++;
+        loadDashboard();
+      }
+    }
+    document.getElementById('triviaBtn').onclick = function() {
+      if (canDoTask('Trivia')) {
+        currentUser.trivia++;
+        loadDashboard();
+      }
+    }
+
+    function loadDashboard() {
+      if (!currentUser) return;
+      resetDailyTasks();
+      let u = currentUser;
+      let vidEarn = u.vids * 5;
+      let photoEarn = u.photos * 1;
+      let triviaEarn = u.trivia * 1;
+      let refEarn = u.referrals * 100;
+      let level2Earn = u.level2 * 50;
+      let total = vidEarn + photoEarn + triviaEarn + refEarn + level2Earn;
+
+      document.getElementById('vids').textContent = u.vids;
+      document.getElementById('vidEarn').textContent = vidEarn;
+      document.getElementById('photos').textContent = u.photos;
+      document.getElementById('photoEarn').textContent = photoEarn;
+      document.getElementById('trivia').textContent = u.trivia;
+      document.getElementById('triviaEarn').textContent = triviaEarn;
+      document.getElementById('referrals').textContent = u.referrals;
+      document.getElementById('refEarn').textContent = refEarn;
+      document.getElementById('level2').textContent = u.level2;
+      document.getElementById('level2Earn').textContent = level2Earn;
+      document.getElementById('totalEarn').textContent = total;
+      document.getElementById('totalEarn2').textContent = total;
+      u.earnings = total;
+      updateTaskButtons();
+    }
+    function loadProfile() {
+      let u = currentUser;
+      if (!u) return;
+      document.getElementById('profileUsername').textContent = u.username;
+      document.getElementById('profilePhone').textContent = u.phone;
+      document.getElementById('profileEmail').textContent = u.email;
+      document.getElementById('profileCountry').textContent = u.country;
+    }
+
+    // Withdraw logic
+    document.getElementById('withdrawBtn').onclick = function() {
+      let msg = document.getElementById('withMessage');
+      if (currentUser && currentUser.earnings >= 150) {
+        msg.textContent = "Withdrawal successful!";
+        currentUser.earnings -= 150;
+        loadDashboard();
+      } else {
+        msg.textContent = "Minimum withdrawal is 150 KES.";
+      }
+    };
+    document.getElementById('withdrawBtn2').onclick = function() {
+      let msg = document.getElementById('withMessage2');
+      if (currentUser && currentUser.earnings >= 150) {
+        msg.textContent = "Withdrawal successful!";
+        currentUser.earnings -= 150;
+        loadDashboard();
+      } else {
+        msg.textContent = "Minimum withdrawal is 150 KES.";
+      }
+    };
+
+    // Show dashboard if returning
+    if (currentUser) showSection('dashboard');
+  </script>
+</body>
+</html>
